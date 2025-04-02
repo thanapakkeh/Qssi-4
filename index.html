@@ -1,0 +1,66 @@
+
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PWA ร้านค้าและผู้ตรวจ</title>
+    <script src="qssi_names.js"></script>
+    <script src="shop_phone_numbers_updated.js"></script>
+    <script src="shop_time_range.js"></script>
+    <script src="data_month_4.js"></script>
+</head>
+<body>
+    <h2>เลือกชื่อผู้ตรวจ</h2>
+    <select id="inspectorName">
+        <option value="">เลือกชื่อผู้ตรวจ</option>
+    </select>
+
+    <h2>กรอกรหัสร้าน</h2>
+    <input type="number" id="shopCodeInput" placeholder="รหัสร้าน">
+    <button onclick="searchShop()">ค้นหา</button>
+
+    <div id="shopDetails"></div>
+
+    <script>
+        // Load inspector names into dropdown
+        displayedNames.forEach(name => {
+            const option = document.createElement('option');
+            option.value = name;
+            option.textContent = name;
+            document.getElementById('inspectorName').appendChild(option);
+        });
+
+        function searchShop() {
+            const shopCode = parseInt(document.getElementById('shopCodeInput').value);
+            const shopDetail = shopPhoneNumbers.find(shop => shop['รหัสร้าน'] === shopCode);
+            const shopTimeDetail = shopTimeRange.find(shop => shop['รหัสสาขา'] === shopCode);
+            const month4Detail = dataMonth4.filter(data => data['รหัสร้าน'] === shopCode);
+
+            let detailHtml = '';
+
+            if (shopDetail) {
+                detailHtml += `<p><strong>${shopDetail['ชื่อสาขา']}</strong> เบอร์โทร: ${shopDetail['เบอร์โทรร้าน']}</p>`;
+            } else {
+                detailHtml += `<p>ไม่พบข้อมูลเบอร์โทรร้าน</p>`;
+            }
+
+            if (shopTimeDetail) {
+                detailHtml += `<p>${shopTimeDetail['เวลาเปิด-ปิดร้าน']}</p>`;
+            } else {
+                detailHtml += `<p>ไม่พบข้อมูลช่วงเวลาเข้า</p>`;
+            }
+
+            if (month4Detail.length > 0) {
+                month4Detail.forEach(entry => {
+                    detailHtml += `<p>ตรวจวันที่: ${entry['วันที่เข้า']} โดย ${entry['ผู้ตรวจ']}</p>`;
+                });
+            } else {
+                detailHtml += `<p>ไม่พบข้อมูลการตรวจในเดือนที่ 4</p>`;
+            }
+
+            document.getElementById('shopDetails').innerHTML = detailHtml;
+        }
+    </script>
+</body>
+</html>
