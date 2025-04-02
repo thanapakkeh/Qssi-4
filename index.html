@@ -23,7 +23,7 @@
     <div id="shopDetails"></div>
 
     <script>
-        // Load inspector names into dropdown
+        // โหลดรายชื่อผู้ตรวจลง dropdown
         displayedNames.forEach(name => {
             const option = document.createElement('option');
             option.value = name;
@@ -35,7 +35,7 @@
             const shopCode = parseInt(document.getElementById('shopCodeInput').value);
             const shopDetail = shopPhoneNumbers.find(shop => shop['รหัสร้าน'] === shopCode);
             const shopTimeDetail = shopTimeRange.find(shop => shop['ชื่อสาขา'] === shopDetail?.['ชื่อสาขา']);
-            const month4Detail = dataMonth4.filter(data => data['รหัสร้าน'] === shopCode);
+            const allMonthDetail = dataMonth4.filter(data => data['รหัสร้าน'] === shopCode);
 
             let detailHtml = '';
 
@@ -51,12 +51,27 @@
                 detailHtml += `<p>ไม่พบข้อมูลช่วงเวลาเข้า</p>`;
             }
 
-            if (month4Detail.length > 0) {
-                month4Detail.forEach(entry => {
-                    detailHtml += `<p>ตรวจวันที่: ${entry['วันที่เข้า']} โดย ${entry['ผู้ตรวจ']}</p>`;
+            if (allMonthDetail.length > 0) {
+                const grouped = {};
+
+                // แยกข้อมูลตามเดือน
+                allMonthDetail.forEach(entry => {
+                    const dateParts = entry['วันที่เข้า'].split('/');
+                    const month = parseInt(dateParts[1]);
+                    if (!grouped[month]) grouped[month] = [];
+                    grouped[month].push(entry);
                 });
+
+                detailHtml += `<h3>ข้อมูลผู้ตรวจแต่ละเดือน</h3>`;
+                for (let m = 1; m <= 12; m++) {
+                    if (grouped[m]) {
+                        grouped[m].forEach(entry => {
+                            detailHtml += `<p>เดือน ${m}: ${entry['วันที่เข้า']} โดย ${entry['ผู้ตรวจ']}</p>`;
+                        });
+                    }
+                }
             } else {
-                detailHtml += `<p>ไม่พบข้อมูลการตรวจในเดือนที่ 4</p>`;
+                detailHtml += `<p>ไม่พบข้อมูลการตรวจ</p>`;
             }
 
             document.getElementById('shopDetails').innerHTML = detailHtml;
