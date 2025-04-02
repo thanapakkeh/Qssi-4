@@ -34,7 +34,7 @@
         function searchShop() {
             const shopCode = parseInt(document.getElementById('shopCodeInput').value);
             const shopDetail = shopPhoneNumbers.find(shop => shop['รหัสร้าน'] === shopCode);
-            const shopTimeDetail = shopTimeRange.find(shop => shop['รหัสสาขา'] === shopCode);
+            const shopTimeDetail = shopTimeRange.find(shop => shop['ชื่อสาขา'] === shopDetail?.['ชื่อสาขา']);
             const month4Detail = dataMonth4.filter(data => data['รหัสร้าน'] === shopCode);
 
             let detailHtml = '';
